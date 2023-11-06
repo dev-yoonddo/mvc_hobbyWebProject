@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.together.vo.UserVO">
+	<!-- 모든 회원 이메일을 가져온다 -->
+	<select id="getEmailList" parameterType="java.util.ArrayList" resultType="String">
+		select userEmail from user where userEmail is NOT NULL and userEmail != '' and userAvailable = 1
+	</select>
+	<!--  회원가입 -->
+	<insert id="join" parameterType="userVO">
+		insert into user (userID, userName, userEmail, userBirth, userPhone, userPassword, userAvailable, userEmailHash, userEmailChecked)
+		values (#{userID}, #{userName}, #{userEmail}, #{userBirth}, #{userPhone}, #{userPassword}, 1, null, 0)
+	</insert>
+	<!-- 로그인 회원 정보 확인 -->
+	<select id="login" parameterType="userVO" resultType="String">
+		select userName from user where userID = #{userID} and userPassword = #{userPassword} and userAvailable = 1
+	</select>
+</mapper>

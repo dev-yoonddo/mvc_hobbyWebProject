@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
+  <display-name>mvc_hobbyWebProject</display-name>
+  <welcome-file-list>
+    <welcome-file>mainPage.jsp</welcome-file>
+  </welcome-file-list>
+  <servlet-mapping>
+    <servlet-name>default</servlet-name>
+    <url-pattern>*.js</url-pattern>
+    <url-pattern>*.css</url-pattern>
+    <url-pattern>*.jpg</url-pattern>
+    <url-pattern>*.JPG</url-pattern>
+    <url-pattern>*.png</url-pattern>
+    <url-pattern>*.PNG</url-pattern>
+    <url-pattern>*.ico</url-pattern>
+    <url-pattern>*.swf</url-pattern>
+    <url-pattern>*.gif</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>dispatcher</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+    <!--서블릿 3.0 표준 파일 업로드 기능 사용 위한 설정-->
+    <multipart-config>
+        <!--파일 하나의 최대 바이트 수-->
+        <max-file-size>5242880</max-file-size>
+        <!--멀티파트 요청 전체의 최대 바이트 수-->
+        <max-request-size>27262976</max-request-size>
+        <!--전송된 파일의 크기가 이것보다 클 때, 메모리의 파일 내용을 임시 파일로 만듦-->
+        <file-size-threshold>1048576</file-size-threshold>
+    </multipart-config>
+</servlet>
+<context-param>
+    <param-name>saveDirectory</param-name>
+    <param-value>C:\fileupload\</param-value><!-- 파일명을 바로 붙이기 위해 \까지 넣어주자 -->
+</context-param>
+
+</web-app>
