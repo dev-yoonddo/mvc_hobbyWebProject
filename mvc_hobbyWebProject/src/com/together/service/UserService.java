@@ -33,6 +33,7 @@ public class UserService {
 		ArrayList<UserVO> emailList = userdao.getEmailList(mapper);
 		System.out.println(emailList);
 		request.setAttribute("emailList", emailList);
+		mapper.commit();
 		mapper.close();
 
 	}
@@ -81,6 +82,44 @@ public class UserService {
 		System.out.println("로그아웃");
 		HttpSession session = request.getSession(false);
 		session.invalidate();
+
+	}
+
+	// 회원 정보 가져오기
+	public void getUserVO(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("회원 정보 가져오기");
+		SqlSession mapper = MySession.getSession();
+		HttpSession session = request.getSession(true);
+		ArrayList<UserVO> emailList = userdao.getEmailList(mapper);
+		String userID = (String) session.getAttribute("userID");
+		UserVO vo = userdao.getUserVO(mapper, userID);
+		request.setAttribute("vo", vo);
+		request.setAttribute("emailList", emailList);
+		mapper.commit();
+		mapper.close();
+	}
+
+	// 회원 정보 업데이트
+	public void userUpdate(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("회원 정보 업데이트");
+		SqlSession mapper = MySession.getSession();
+		HttpSession session = request.getSession(true);
+
+		// 폼에 입력된 값 가져오기
+		String userID = (String) session.getAttribute("userID");
+		String userName = request.getParameter("userName");
+		String userEmail = request.getParameter("userEmail");
+		String userBirth = request.getParameter("userBirth");
+		String userPhone = request.getParameter("userPhone");
+		String userPassword = request.getParameter("userPassword");
+		UserVO vo = new UserVO(userID, userName, userEmail, userBirth, userPhone, userPassword);
+		System.out.println(userID);
+		System.out.println(userName);
+		userdao.userUpdate(mapper, vo);
+		UserVO vo2 = userdao.getUserVO(mapper, userID);
+		request.setAttribute("vo", vo2);
+		mapper.commit();
+		mapper.close();
 
 	}
 }

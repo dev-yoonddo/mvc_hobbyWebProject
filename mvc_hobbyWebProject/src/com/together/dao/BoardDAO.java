@@ -95,9 +95,9 @@ public class BoardDAO {
 	 * 
 	 * // Commit the transaction mapper.commit(); } finally { mapper.close(); }
 	 */
-	public void delete(SqlSession mapper, int idx) {
+	public void delete(SqlSession mapper, int boardID) {
 		System.out.println("BoardDAO클래스의 delete() 메서드");
-		mapper.delete("delete", idx);
+		mapper.delete("delete", boardID);
 	}
 
 }

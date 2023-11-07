@@ -469,17 +469,17 @@ table caption{
 						<button type="button" id="list" class="btn-blue" onclick="location.href='community'"><span>목록</span></button>					
 					</c:when>
 					<c:otherwise>
-						<button type="button" id="list" class="btn-blue" onclick="location.href= 'searchPage?searchField2=${vo.boardCategory}'"><span>목록</span></button>
+						<button type="button" id="list" class="btn-blue" onclick="location.href= 'searchPage?category=${vo.boardCategory}'"><span>목록</span></button>
 					</c:otherwise>
 				</c:choose>
 				<c:if test="${not empty userID}">
 					<button type="button" class="btn-blue" id="cmt-write-btn" onclick="cmtAction()"><span>댓글쓰기</span></button>
 					<c:if test="${vo.userID == userID}">
-						<button type="button" class="btn-blue" id="update" onclick="location.href='boardAction?boardID=${vo.boardID}&action=update'"><span>수정</span></button>
-						<button type="button" class="btn-blue" id="btn-del" onclick="if(confirm('정말로 삭제하시겠습니까?')){location.href='deleteAction?boardID=${boardID}'}"><span>삭제</span></button>
+						<button type="button" class="btn-blue" id="update" onclick="location.href='update?boardID=${vo.boardID}'"><span>수정</span></button>
+						<button type="button" class="btn-blue" id="btn-del" onclick="if(confirm('정말로 삭제하시겠습니까?')){location.href='deleteAction?boardID=${vo.boardID}&category=${vo.boardCategory}'}"><span>삭제</span></button>
 					</c:if>
 					<c:if test="${vo.userID == 'manager'}">
-						<button type="button" class="btn-blue" id="btn-del" onclick="if(confirm('정말로 삭제하시겠습니까?')){location.href='deleteAction?boardID=${boardID}'}"><span>삭제</span></button>
+						<button type="button" class="btn-blue" id="btn-del" onclick="if(confirm('정말로 삭제하시겠습니까?')){location.href='deleteAction?boardID=${vo.boardID}&category=${vo.boardCategory}'}"><span>삭제</span></button>
 					</c:if>
 				</c:if>
 				</div>

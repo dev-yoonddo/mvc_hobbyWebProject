@@ -35,4 +35,15 @@ public class UserDAO {
 		// session.setAttribute("userID", vo.getUserID());
 		return (String) mapper.selectOne("login", vo);
 	}
+
+	public UserVO getUserVO(SqlSession mapper, String userID) {
+		System.out.println("UserDAO 클래스의 getUserVO() 메소드");
+		return (UserVO) mapper.selectOne("getUserVO", userID);
+
+	}
+
+	public void userUpdate(SqlSession mapper, UserVO vo) {
+		System.out.println("UserDAO 클래스의 update() 메소드");
+		mapper.update("userUpdate", vo);
+	}
 }

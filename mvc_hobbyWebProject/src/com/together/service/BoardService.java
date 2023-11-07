@@ -168,8 +168,8 @@ public class BoardService {
 	public void delete(HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("MvcboardService 클래스의 delete() 메서드");
 		SqlSession mapper = MySession.getSession();
-		int idx = Integer.parseInt(request.getParameter("idx"));
-		dao.delete(mapper, idx);
+		int boardID = Integer.parseInt(request.getParameter("boardID"));
+		dao.delete(mapper, boardID);
 		mapper.commit();
 		mapper.close();
 	}

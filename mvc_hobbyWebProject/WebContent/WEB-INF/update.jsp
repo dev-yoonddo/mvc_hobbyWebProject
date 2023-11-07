@@ -200,7 +200,12 @@ textarea{
 }
 </style>
 <body>
-<%int boardID = Integer.parseInt(request.getParameter("boardID")); %>
+<%
+String userID = null;
+if(session.getAttribute("userID")!=null){
+	userID=(String)session.getAttribute("userID");
+}
+%>
 <!-- header start-->
 <header id="header">
 <jsp:include page="/header/header.jsp"/>
@@ -214,9 +219,10 @@ textarea{
 	님 안녕하세요
 	</h3>
 	<br>
-	<form method="post" action="updateOK" enctype="multipart/form-data">
+	<form method="post" action="updateAction" enctype="multipart/form-data">
 		<div class="right-row">
 			<input type="hidden" name="boardID" value="${vo.boardID}"/>
+			<input type="hidden" name="userID" value="<%=userID%>">
 		
 				<div class="category-sel" style="display: flex;">
 				<select name="boardCategory">

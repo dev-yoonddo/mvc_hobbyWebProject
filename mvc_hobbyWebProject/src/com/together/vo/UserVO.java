@@ -12,6 +12,9 @@ public class UserVO {
 	private String userEmailHash;
 	private boolean userEmailChecked;
 
+	public UserVO() {
+	}
+
 	public UserVO(String userID, String userPassword) {
 		this.userID = userID;
 		this.userPassword = userPassword;

@@ -46,7 +46,8 @@
 	<select id="getBoardVO" parameterType="int" resultType="boardVO">
 		select * from board where boardID = #{boardID}
 	</select>
-	<!-- 글 1건을 수정한다. -->
+	<!-- 글 1건을 수정한
+	다. -->
 	<update id="update" parameterType="boardVO">
 		update board set boardTitle = #{boardTitle}, boardContent = #{boardContent}, boardCategory = #{boardCategory} ,filename = #{filename}, fileRealname = #{fileRealname}, fileDownCount = 0 where boardID = #{boardID}
 	</update>

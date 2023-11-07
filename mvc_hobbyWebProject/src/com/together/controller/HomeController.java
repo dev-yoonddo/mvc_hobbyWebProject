@@ -15,7 +15,8 @@ import com.together.service.UserService;
 import com.together.vo.BoardVO;
 
 @WebServlet(urlPatterns = { "/mainPage", "/join", "/joinAction", "/login", "/loginAction", "/logout", "/community",
-		"/searchPage", "/view", "/write", "/writeAction", "/boardAction", "/updateOK" })
+		"/searchPage", "/view", "/write", "/writeAction", "/update", "/updateAction", "/deleteAction", "/userUpdate",
+		"/userUpdateAction" })
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -81,15 +82,19 @@ public class HomeController extends HttpServlet {
 			urservice.logout(request, response);
 			redirect = "mainPage";
 			break;
+		case "/userUpdate":
+			urservice.getUserVO(request, response);
+			redirect = "userUpdate";
+			break;
+		case "/userUpdateAction":
+			urservice.userUpdate(request, response);
+			redirect = "userUpdate";
+			break;
 		case "/community":
 			redirect = "community";
 			break;
 		case "/searchPage":
-
-//				브라우저에 출력할 1페이지 분량의 글과 페이지 작업에 사용할 8개의 변수가 저장된 클래스 객체를
-//				얻어오는 메소드를 호출한다.
 			bdservice.getBoardList(request, response);
-
 			redirect = "searchPage";
 			break;
 		/*
@@ -125,30 +130,29 @@ public class HomeController extends HttpServlet {
 
 			redirect = "view";
 			break;
-		case "/boardAction":
-			String action = request.getParameter("action");
-			if (action.equals("update")) {
-				System.out.println("업데이트");
-				bdservice.getBoardVO(request, response);
-				redirect = "update";
-			} else {
-				System.out.println("삭제");
-				bdservice.delete(request, response);
-				redirect = "searchPage";
-			}
+		case "/update":
+			System.out.println("업데이트");
+			bdservice.getBoardVO(request, response);
+			redirect = "update";
 			break;
 
-		case "/updateOK":
+		case "/updateAction":
 			// System.out.println("update success: " + request.getParameter("boardID"));
-			BoardVO updateVO = upload.fileupload(request, response);
-			System.out.println(updateVO);
-			bdservice.update(updateVO, request, response);
+			BoardVO vo2 = upload.fileupload(request, response);
+			System.out.println(vo2);
+			bdservice.update(vo2, request, response);
 			// service.getBoardVO(request, response);
 			redirect = "view";
 			paramName = "boardID";
-			param = Integer.toString(updateVO.getBoardID());
+			param = Integer.toString(vo2.getBoardID());
 			break;
 
+		case "/deleteAction":
+			bdservice.delete(request, response);
+			redirect = "searchPage";
+			paramName = "category";
+			param = request.getParameter("category");
+			break;
 		}
 
 		// parameter값이 존재하면 sendRedirect로 파라미터에 해당하는 페이지로 이동한다.

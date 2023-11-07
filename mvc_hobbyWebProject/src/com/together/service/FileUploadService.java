@@ -54,7 +54,8 @@ public class FileUploadService {
 						// 파일을 경로에 저장한다.
 						filename = item.getName();
 						if (filename != null && !filename.isEmpty()) {
-							String dir = "C:/gookbiProject/JSP/workspace/mvc_hobbyWebProject/WebContent/upload/";
+							// git repository와 연결하면 경로가 바뀐다.
+							String dir = "C:/Users/admin/git/mvc_hobbyWebProject/mvc_hobbyWebProject/WebContent/upload/";
 							File fileupload = new File(dir);
 							if (!fileupload.exists()) {
 								fileupload.mkdirs();
