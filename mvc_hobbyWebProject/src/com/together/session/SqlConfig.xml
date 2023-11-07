@@ -6,8 +6,9 @@
 	<properties resource="com/together/session/db.properties" />
 	
 	<typeAliases>
-		<typeAlias type="com.together.vo.BoardVO" alias="boardVO" />
 		<typeAlias type="com.together.vo.UserVO" alias="userVO" />
+		<typeAlias type="com.together.vo.BoardVO" alias="boardVO" />
+		<typeAlias type="com.together.vo.CommentVO" alias="cmtVO" />
 	</typeAliases>
 	
 	<environments default="development">
@@ -23,8 +24,9 @@
 	</environments>
 	
 	<mappers>
-		<mapper resource="com/together/session/board.xml" />
 		<mapper resource="com/together/session/user.xml" />
+		<mapper resource="com/together/session/board.xml" />
+		<mapper resource="com/together/session/comment.xml" />
 	</mappers>
 	
 </configuration>
