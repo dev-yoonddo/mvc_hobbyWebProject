@@ -10,8 +10,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.ibatis.session.SqlSession;
 
 import com.together.dao.BoardDAO;
+import com.together.dao.CommentDAO;
 import com.together.session.MySession;
 import com.together.vo.BoardVO;
+import com.together.vo.CommentVO;
 
 public class BoardService {
 
@@ -25,6 +27,7 @@ public class BoardService {
 	}
 
 	private BoardDAO dao = BoardDAO.getInstance();
+	private CommentDAO cmtdao = CommentDAO.getInstance();
 	DownloadAction down = new DownloadAction();
 
 //	컨트롤러에 insertOK.nhn 이라는 요청이 들어오면 컨트롤러에서 호출하는 메소드로 테이블에 저장할 메인글이 
@@ -60,7 +63,7 @@ public class BoardService {
 			category = (String) request.getAttribute("category");
 		}
 		// mapper.commit();
-		ArrayList<BoardVO> boardlist = dao.selectList(mapper, category);
+		ArrayList<BoardVO> boardlist = dao.selectBoardList(mapper, category);
 		request.setAttribute("category", category);
 		request.setAttribute("boardlist", boardlist);
 		System.out.println(category);
@@ -148,8 +151,12 @@ public class BoardService {
 		SqlSession mapper = MySession.getSession();
 		int boardID = Integer.parseInt(request.getParameter("boardID"));
 		BoardVO vo = dao.getBoardVO(mapper, boardID);
+		// 해당 글의 댓글 리스트와 갯수 가져오기
+		ArrayList<CommentVO> cmtlist = cmtdao.selectCmtList(mapper, boardID);
 		request.setAttribute("vo", vo);
 		request.setAttribute("boardID", boardID);
+		request.setAttribute("cmtlist", cmtlist);
+
 		System.out.println(boardID);
 		mapper.close();
 	}

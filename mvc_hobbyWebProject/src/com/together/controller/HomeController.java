@@ -1,6 +1,7 @@
 package com.together.controller;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -10,19 +11,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.together.service.BoardService;
+import com.together.service.CmtService;
+import com.together.service.ErrorMessage;
 import com.together.service.FileUploadService;
 import com.together.service.UserService;
 import com.together.vo.BoardVO;
 
 @WebServlet(urlPatterns = { "/mainPage", "/join", "/joinAction", "/login", "/loginAction", "/logout", "/community",
 		"/searchPage", "/view", "/write", "/writeAction", "/update", "/updateAction", "/deleteAction", "/userUpdate",
-		"/userUpdateAction" })
+		"/userUpdateAction", "/checkID", "/cmt", "/cmt/delete" })
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
 //	컨트롤러에서 사용할 service 클래스 객체를 생성한다.
-	private BoardService bdservice = BoardService.getInstance();
 	private UserService urservice = UserService.getInstance();
+	private BoardService bdservice = BoardService.getInstance();
+	private CmtService cmtservice = CmtService.getInstance();
+	private ErrorMessage error = ErrorMessage.getInstance();
 
 	public HomeController() {
 		super();
@@ -48,6 +53,7 @@ public class HomeController extends HttpServlet {
 		response.setContentType("text/html; charset=UTF-8");
 //		System.out.println(request.getParameter("name"));
 		FileUploadService upload = new FileUploadService();
+		PrintWriter script = response.getWriter();
 
 //		요청을 받는다.
 		String url = request.getRequestURI();
@@ -59,6 +65,8 @@ public class HomeController extends HttpServlet {
 		String paramName = null;
 		String param = null;
 		String redirect = null;
+		String err = "";
+
 		switch (context) {
 		case "/mainPage":
 			redirect = "mainPage";
@@ -68,15 +76,44 @@ public class HomeController extends HttpServlet {
 			redirect = "join";
 			break;
 		case "/joinAction":
-			urservice.join(request, response);
-			redirect = "login";
+			int join = urservice.join(request, response);
+			if (join == 0) {
+				redirect = "login";
+				err = "joinY";
+			} else {
+				redirect = "join";
+				err = "joinN";
+			}
+			error.errorTest(err, request, response);
+			break;
+		case "/checkID":
+			// System.out.println("컨트롤러 요청 성공");
+			int result = urservice.checkID(request, response);
+
+			// 사용자가 입력한 아이디와 동일한 아이디가 존재하면 1, 존재하지 않으면 0
+			if (result == 0) {
+				// ajax에 메시지를 전달한다.
+				script.print("success");
+			} else {
+				script.print("fail");
+			}
+			script.flush();
+			script.close();
 			break;
 		case "/login":
 			redirect = "login";
 			break;
 		case "/loginAction":
-			urservice.login(request, response);
-			redirect = "community";
+			int login = urservice.login(request, response);
+			// 로그인 실패 (login == 0) 는 login페이지로, 로그인 성공은 community 페이지로 이동
+			if (login == 0) {
+				redirect = "login";
+				err = "loginN";
+			} else {
+				redirect = "community";
+				err = "loginY";
+			}
+			error.errorTest(err, request, response);
 			break;
 		case "/logout":
 			urservice.logout(request, response);
@@ -152,6 +189,12 @@ public class HomeController extends HttpServlet {
 			redirect = "searchPage";
 			paramName = "category";
 			param = request.getParameter("category");
+			break;
+
+		case "/cmt":
+			cmtservice.regist(request, response);
+			System.out.println(request.getParameter("boardID"));
+			redirect = "view";
 			break;
 		}
 

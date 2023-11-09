@@ -29,7 +29,9 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 
 </head>
+<style>
 
+</style>
 <body>
 <%
 
@@ -45,20 +47,31 @@
 	<input type="hidden" id="rsaPublicKeyExponent" value="${publicKeyExponent}" />
 	 -->
         <h2>회원가입</h2>
-        
+       	<c:if test="${joinError == 'fail'}">
+        ${vo}
+        </c:if>
         <form method="post" action="joinAction" id="join-form" role="form" onsubmit="return userDataCheck(this)">
-            <input type="text" name="userID" id="userID" placeholder="아이디 입력">
-            <input type="text" name="userName" id="userName" placeholder="이름 입력">
-            <input type="text" name="userEmail" id="userEmail" placeholder="이메일 입력" onkeyup="emailCheck('${emailList}')">
-            <input type="text" name="userBirth" id="userBirth" placeholder="생년월일 입력">
-            <input type="text" name="userPhone" id="userPhone" placeholder="핸드폰번호 입력">
-            <input type="password" name="userPassword" id="userPassword" placeholder="비밀번호 입력" onkeyup="passwordCheck2()">
-            <input type="password" name="userPassword1" id="userPassword1" placeholder="비밀번호 확인" onkeyup="passwordCheck2()">
+            <div id="input-id">
+	         	<input type="text" name="userID" class="join-input" id="userID"  placeholder="아이디 입력">	            
+	            <div class="btn-blue" id="checkID" onclick="checkID(userID)"><span>중복체크</span></div>
+	            <div id="checkOK"><i class="fa-solid fa-square-check fa-3x"></i></div>
+            </div>
+            <input type="text" name="userName" class="join-input" id="userName"  placeholder="이름 입력">
+            <input type="text" name="userEmail" class="join-input" id="userEmail" placeholder="이메일 입력" onkeyup="emailCheck('${emailList}')">
+            <input type="text" name="userBirth" class="join-input" id="userBirth" placeholder="생년월일 입력">
+            <input type="text" name="userPhone" class="join-input" id="userPhone" placeholder="핸드폰번호 입력">
+            <input type="password" name="userPassword" class="join-input" id="userPassword" placeholder="비밀번호 입력" onkeyup="passwordCheck2()">
+            <input type="password" name="userPassword1" class="join-input" id="userPassword1" placeholder="비밀번호 확인" onkeyup="passwordCheck2()">
             <div id="check">
-				<h5 id="checkMessage"></h5>
+				<h5 id="checkMessage">
+					<c:if test="${joinError == 'fail'}">
+				    	<span id="error-text">이미 존재하는 아이디입니다.</span>
+				    </c:if>
+				</h5>
 			</div>
-            <input type="submit" value="join">
+            <input type="submit" class="join-input" value="join">
         </form>
+       
         <!-- 
         <form id="frm" name="frm" method="post" action="/login">
 			<input type="hidden" name="securedUser_Id" id="securedUser_Id"value="" />
@@ -69,5 +82,6 @@
 
 </div>
 </section>
+
 </body>
 </html>

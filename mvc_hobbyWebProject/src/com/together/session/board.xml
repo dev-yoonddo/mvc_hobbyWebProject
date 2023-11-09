@@ -16,7 +16,7 @@
 		select count(*) from board as b
 	</select>
 	<!-- 모든 글 목록을 가져온다 -->
-	<select id="selectList" parameterType="java.util.ArrayList" resultType="boardVO">
+	<select id="selectBoardList" parameterType="java.util.ArrayList" resultType="boardVO">
 		select * from board where boardCategory like #{boardCategory} order by boardID desc
 	</select>
 	<!-- 1페이지 분량의 글 목록을 얻어온다. 

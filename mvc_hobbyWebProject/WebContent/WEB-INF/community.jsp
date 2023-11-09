@@ -140,7 +140,6 @@ button {
 	<jsp:include page="/header/header.jsp"/>
 </header>
 <section>
-
 <div class="select-hobby">
 <form method="post" id ="searchField2" action="searchPage">
 	<div id="select-sec">

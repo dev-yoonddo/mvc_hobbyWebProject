@@ -6,7 +6,6 @@ import java.util.ArrayList;
 
 import org.apache.ibatis.session.SqlSession;
 
-import com.together.vo.BoardVO;
 import com.together.vo.CommentVO;
 
 public class CommentDAO {
@@ -25,80 +24,26 @@ public class CommentDAO {
 //	MvcboardService 클래스에서 호출되는 mapper와 테이블에 저장할 메인글 정보가 저장된 객체를 넘겨받고 메인글을
 //	테이블에 저장하는 mvcboard.xml 파일의 insert sql 명령을 실행하는 메소드
 	public void regist(SqlSession mapper, CommentVO vo) {
-		System.out.println("BoardDAO 클래스의 insert() 메소드");
+		System.out.println("CommentDAO 클래스의 insert() 메소드");
 		mapper.insert("regist", vo);
 	}
 
 //	MvcboardService 클래스에서 호출되는 mapper를 넘겨받고 전체 글의 개수를 얻어오는 mvcboard.xml 파일의
 //	select sql 명령을 실행하는 메소드
-	public int selectCount(SqlSession mapper) {
-		System.out.println("BoardDAO 클래스의 selectCount() 메소드");
-		return (int) mapper.selectOne("selectCount");
+	public int selectCount(SqlSession mapper, int boardID) {
+		System.out.println("CommentDAO 클래스의 selectCount() 메소드");
+		return (int) mapper.selectOne("selectCount", boardID);
 	}
 
-	public ArrayList<BoardVO> selectList(SqlSession mapper, String boardCategory) {
-		System.out.println("BoardDAO 클래스의 boardList() 메서드");
-		ArrayList<BoardVO> boardlist = (ArrayList<BoardVO>) mapper.selectList("selectList", boardCategory);
-		/*
-		 * try { PreparedStatement pstmt = conn.prepareStatement(SQL); rs =
-		 * pstmt.executeQuery(); while (rs.next()) { BoardVO board = new BoardVO();
-		 * board.setIdx(rs.getInt(1)); board.setName(rs.getString(2));
-		 * board.setSubject(rs.getString(3)); board.setContent(rs.getString(4));
-		 * board.setGup(rs.getInt(5)); board.setLev(rs.getInt(6));
-		 * board.setSeq(rs.getInt(7)); board.setHit(rs.getInt(8));
-		 * board.setWriteDate(rs.getDate(9)); list.add(board); } } catch (Exception e) {
-		 * e.printStackTrace(); } return list;
-		 */
-		return boardlist;
+	public ArrayList<CommentVO> selectCmtList(SqlSession mapper, int boardID) {
+		System.out.println("CommentDAO 클래스의 selectdList() 메서드");
+		ArrayList<CommentVO> cmtlist = (ArrayList<CommentVO>) mapper.selectList("selectCmtList", boardID);
+		return cmtlist;
 		// return mapper.selectList("selectList");
 	}
 
-	/*
-	 * MvcboardService 클래스에서 호출되는 mapper와 1페이지의 시작, 끝 인덱스가 저장된 HashMap 객체를 넘겨받고 //
-	 * 1페이지 분량의 글 목록을 얻어오는 mvcboard.xml 파일의 select sql 명령을 실행하는 메소드 public
-	 * ArrayList<BoardVO> selectList(SqlSession mapper, HashMap<String, Integer>
-	 * hmap) { System.out.println("BoardDAO 클래스의 selectList() 메소드"); return
-	 * (ArrayList<BoardVO>) mapper.selectList("selectList", hmap); }
-	 */
-//	MvcboardService 클래스에서 호출되는 mapper와 조회수를 증가시킬 글번호를 넘겨받고 조회수를 증가시키는
-//	mvcboard.xml 파일의 update sql 명령을 실행하는 메소드
-	public void increment(SqlSession mapper, int boardID) {
-		System.out.println("BoardDAO 클래스의 increment() 메소드");
-		mapper.update("increment", boardID);
+	public CommentVO getCmtVO(SqlSession mapper, int cmtID) {
+		System.out.println("CommentDAO 클래스의 getCmtVO() 메소드");
+		return (CommentVO) mapper.selectOne("getCmtVO", cmtID);
 	}
-
-//	MvcboardService 클래스에서 호출되는 mapper와 조회수를 증가시킨 글번호를 넘겨받고 조회수를 증가시킨 글 1건을
-//	얻어오는 mvcboard.xml 파일의 select sql 명령을 실행하는 메소드
-	public BoardVO getBoardVO(SqlSession mapper, int boardID) {
-		System.out.println("BoardDAO 클래스의 getBoardVO() 메소드");
-		return (BoardVO) mapper.selectOne("getBoardVO", boardID);
-	}
-
-	// 게시글 업데이트
-	public void update(SqlSession mapper, BoardVO update) {
-		mapper.update("update", update);
-	}
-
-	public String getFileName(SqlSession mapper, int boardID) {
-		return (String) mapper.selectOne("getFileName", boardID);
-	}
-
-	public void download(SqlSession mapper, int boardID) {
-		System.out.println("BoardDAO클래스의 download() 메서드");
-		mapper.update("download", boardID);
-	}
-
-	/*
-	 * try { Map<String, Object> paramMap = new HashMap<>(); paramMap.put("idx",
-	 * idx); paramMap.put("subject", subject); paramMap.put("content", content);
-	 * 
-	 * // Execute the update statement mapper.update("update", paramMap);
-	 * 
-	 * // Commit the transaction mapper.commit(); } finally { mapper.close(); }
-	 */
-	public void delete(SqlSession mapper, int boardID) {
-		System.out.println("BoardDAO클래스의 delete() 메서드");
-		mapper.delete("delete", boardID);
-	}
-
 }

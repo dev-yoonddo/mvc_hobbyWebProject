@@ -486,11 +486,12 @@ table caption{
 			</div>
 		</div>
 		
-		<h5 style="font-size: 15pt; color: #646464; float: left;">댓글 ()<br></h5><hr id="cmt-line" style="width: 1000px;"><br>
+		<h5 style="font-size: 15pt; color: #646464; float: left;">댓글 (${cmtlist.size()})<br></h5><hr id="cmt-line" style="width: 1000px;"><br>
 		
         <!-- 답변쓰기 버튼을 눌렀을 때만 답변쓰기 섹션이 나타나도록 설정 -->
 		<div id="cmt-write" style="display: none; width: 600px; height: 220px;"> 
-	          <form method="post" action="commentAction.jsp?boardID=${vo.boardID}">
+	          <form method="post" action="cmt">
+	          <input type="hidden" name="boardID" value="${vo.boardID}">
 		          <table class="cmt-table" style="height: 100px; border-style: none;">
 		             <tbody>
 		                <tr>
@@ -501,7 +502,34 @@ table caption{
 		      <button type="submit" class="btn-blue" id="cmt-cpl"><span>완료</span></button>
 		      </form>
 	   </div><br><br>
-   </div>
+	   
+	<!-- 댓글 리스트 -->
+	<div class="cmt-view" style="height: auto;">
+		<div class="row" style="width: 600px; height: auto;">
+			<c:forEach var="cmt" items="${cmtlist}">
+			    <div class="cmt-list" style="width: 600px; height: 110px;">
+			    <div style="display: flex;">
+			    	<div class="cmt-icon" style="justify-content: center; padding: 10px;">
+	               		<i style="font-size: 30pt;"class="fa-regular fa-face-smile"></i>
+	               	</div>
+               		<table class="cmt-table" style="width: 600px;">
+               		<tr style="height: 30px; table-layout:fixed; ">
+               			<td align="left" style="width:30%;">${cmt.userID}</td>
+               			<td align="right" style="width:70%;">${cmt.cmtDate }</td>
+               		</tr>
+               		<tr style="height: auto; font-weight: 550;">
+               			<td colspan="2">${cmt.cmtContent}</td>
+               		</tr>		               		
+		           	</table>
+			    </div>
+			    <c:if test="${not empty userID and userID == cmt.userID or userID == 'manager'}">
+			         <button type="button" class="btn-blue" id="cmt-btn" onclick="if(confirm('답글을 삭제하시겠습니까?')){location.href='cmt/delete?boardID=${vo.boardID}&cmtID=${cmt.cmtID}'}"><span>삭제</span></button>
+			    </c:if>
+				</div>
+			</c:forEach>
+         </div>
+	</div>
+</div>
 </section>
 <!-- section end -->
 

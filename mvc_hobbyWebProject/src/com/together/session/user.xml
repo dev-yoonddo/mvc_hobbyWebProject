@@ -5,6 +5,10 @@
 	<select id="getEmailList" parameterType="java.util.ArrayList" resultType="String">
 		select userEmail from user where userEmail is NOT NULL and userEmail != '' and userAvailable = 1
 	</select>
+	<!-- 같은 아이디가 존재하는지 검사 -->
+	<select id="getUserID" parameterType="String" resultType="String">
+		select userID = #{userID} from user where userID = #{userID} and userAvailable = 1
+	</select>
 	<!--  회원가입 -->
 	<insert id="join" parameterType="userVO">
 		insert into user (userID, userName, userEmail, userBirth, userPhone, userPassword, userAvailable, userEmailHash, userEmailChecked)

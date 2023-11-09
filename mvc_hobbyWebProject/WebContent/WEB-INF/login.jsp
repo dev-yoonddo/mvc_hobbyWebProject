@@ -3,6 +3,9 @@
 <%@page import="java.security.SecureRandom"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" errorPage="/error/errorPage.jsp"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,9 +27,25 @@
 </head>
 <style>
 .login-wrapper{
-margin: 20px;
+	margin: 20px;
+}
+#error-text{
+	color: red;
+}
+#login-bottom{
+	width: 100%;
+	display: flex;
+	padding: 7px;
+	margin: 0 auto;
+}
+#remember{
+	width: 50%;
+	float: left;
 }
 #join{
+	width: 50%;
+	padding: 5px;
+	padding-left: 60px; 
 	cursor: pointer;
 	float: right;
 }
@@ -49,12 +68,19 @@ if(session.getAttribute("userID") != null){
 		<form method="post" action="loginAction" role="form" id="login-form">
 		    <input type="text" name="userID" id="userID" placeholder="아이디 입력">
 		    <input type="password" name="userPassword" id="userPassword" placeholder="비밀번호 입력">
-		    <label for="remember-check">
-		        <input type="checkbox" id="remember-check">아이디 저장하기
-		    </label>
-		    <input type="submit" value="Login">
+		    <c:if test="${loginError == 'fail'}">
+		    	<span id="error-text">아이디 또는 비밀번호 오류입니다.</span>
+		    </c:if>
+		    <input type="submit" id="login" value="Login">
 		</form>
-		<div id="join" onclick="location.href='join'">회원가입 하러가기</div>
+		<div id="login-bottom">
+			<div id="remember">
+			    <label for="remember-check">
+			        <input type="checkbox" id="remember-check">아이디 저장하기
+			    </label>
+		    </div>
+			<div id="join" onclick="location.href='join'">회원가입 하러가기</div>
+		</div>
 	</div>
 	</div>
 </section>

@@ -24,6 +24,15 @@ public class UserDAO {
 		return (ArrayList<UserVO>) mapper.selectList("getEmailList");
 	}
 
+	// 가져온 userID와 동일한 데이터가 있으면 1, 없으면 0을 반환한다.
+	public int getUserID(SqlSession mapper, String userID) {
+		int result = 0;
+		if (mapper.selectOne("getUserID", userID) != null) {
+			result = 1;
+		}
+		return result;
+	}
+
 	public void join(SqlSession mapper, UserVO vo) {
 		System.out.println("UserDAO 클래스의 join() 메소드");
 		System.out.println(vo);

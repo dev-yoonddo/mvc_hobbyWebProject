@@ -35,9 +35,9 @@ public class BoardDAO {
 		return (int) mapper.selectOne("selectCount");
 	}
 
-	public ArrayList<BoardVO> selectList(SqlSession mapper, String boardCategory) {
+	public ArrayList<BoardVO> selectBoardList(SqlSession mapper, String boardCategory) {
 		System.out.println("BoardDAO 클래스의 boardList() 메서드");
-		ArrayList<BoardVO> boardlist = (ArrayList<BoardVO>) mapper.selectList("selectList", boardCategory);
+		ArrayList<BoardVO> boardlist = (ArrayList<BoardVO>) mapper.selectList("selectBoardList", boardCategory);
 		/*
 		 * try { PreparedStatement pstmt = conn.prepareStatement(SQL); rs =
 		 * pstmt.executeQuery(); while (rs.next()) { BoardVO board = new BoardVO();

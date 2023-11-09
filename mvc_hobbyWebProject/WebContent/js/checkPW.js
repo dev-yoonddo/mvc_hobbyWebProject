@@ -1,12 +1,17 @@
 //onsubmit에 작동하는 함수이기 때문에 비밀번호가 아닌 모든 데이터도 다룰 수 있다.
-//password check
+//data check
+
+//emailCheck 에서 emailExist == true로 변경되었다면 userdataCheck에서
+//사용할 수 없는 이메일임을 알린다.
+const ckKor = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g; //한글 체크
+const ckEng = /[a-zA-Z]/g; // 영어 체크
+const ckSpc = /[!?@#$%^&*():;+-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/g;// 특수문자 체크
+const ckNum = /[^0-9]/g; // 숫자가 아닌 문자 체크
+const ckEngNum = /[a-zA-Z0-9]/g; // 영어+숫자 체크
+const ckSpace = /[\s]/g;// 공백 체크
+var emailExists = false;
+
 function userDataCheck(obj) {
-	const ckKor = /[ㄱ-ㅎㅏ-ㅣ가-힣]/g; //한글 체크
-	const ckEng = /[a-zA-Z]/g; // 영어 체크
-	const ckSpc = /[!?@#$%^&*():;+-=~{}<>\_\[\]\|\\\"\'\,\.\/\`\₩]/g;// 특수문자 체크
-	const ckNum = /[^0-9]/g; // 숫자가 아닌 문자 체크
-	const ckEngNum = /[a-zA-Z0-9]/g; // 영어+숫자 체크
-	const ckSpace = /[\s]/g;// 공백 체크
 
 	// id check
 	var id = obj.userID;
@@ -24,6 +29,10 @@ function userDataCheck(obj) {
 		alert("아이디는 10자 이내로 입력해주세요.");
 		error(id);
 		return false;
+	}
+	if(id.disabled === false){
+		alert("아이디 중복 검사를 해주세요.");
+		return false;	
 	}
 
 	// name check
@@ -52,7 +61,14 @@ function userDataCheck(obj) {
 		error(mail);
 		return false;
 	}
-
+	//하단의 emailCheck에서 이미 존재하는 이메일을 입력했다면 emailExists == true로 변경했기 때문에
+	// submit 실행 시 emailExist == true이면 알림창을 띄우고 텍스트를 지운다.
+	if(emailExists == true){
+		alert("사용할 수 없는 이메일입니다.");
+		error(mail);
+		return false;
+	}
+	
 	// birth check
 	var birth = obj.userBirth;
 	if (birth.value.search(ckSpace) !== -1) {
@@ -75,7 +91,7 @@ function userDataCheck(obj) {
 	// phone check
 	var phone = obj.userPhone;
 	var startP = phone.value.slice(0, 3);
-	console.log(startP);
+	//console.log(startP);
 	if (phone.value.search(ckSpace) !== -1) {
 		alert("공백이 포함되어 있습니다.");
 		error(phone);
@@ -86,12 +102,14 @@ function userDataCheck(obj) {
 		error(phone);
 		return false;
 	}
+	//password check
 	// alert('passwordCheck()');
 	if (obj.userPassword.value != obj.userPassword1.value) {
 		alert("비밀번호가 일치하지 않습니다");
-		obj.userPassword.value = '';
+		
+		//다시 입력한 비밀번호만 지운다.
 		obj.userPassword1.value = '';
-		obj.userPassword.focus();
+		obj.userPassword1.focus();
 		return false;
 	}
 	// 입력한 비밀번호가 8자 이상 12자 이하인가 검사한다.
@@ -129,7 +147,9 @@ function userDataCheck(obj) {
 		obj.userPassword.focus();
 		return false;
 	}
-
+	
+	//모든 검사에서 통과되면 userID의 속성이 disabled == true로 되어있던걸 false로 변경하고 true를 반환한다.
+	id.disabled = false;
 	return true;
 
 }
@@ -140,6 +160,57 @@ function error(result) {
 	result.focus();
 }
 
+// 아이디 중복 체크하기
+function checkID(id){
+	
+	// id check
+	if(id.value.length == 0){
+		alert("아이디를 입력하세요.");
+		error(id);
+	}
+	else if (id.value.search(ckSpace) !== -1) {
+		alert("공백이 포함되어 있습니다.");
+		error(id);
+	}
+	else if (ckKor.test(id.value) || ckSpc.test(id.value)) {
+		alert("아이디는 영어로만 입력해주세요.");
+		error(id);
+	}
+	else if (id.value.length > 10) {
+		alert("아이디는 10자 이내로 입력해주세요.");
+		error(id);
+	}else{
+		//location.href='checkID?userID=' + id.value;
+		//저장된 데이터들을 가져온다.
+        var data = {
+            userID: id.value
+        };
+        $.ajax({
+            type: 'GET',
+            //url: 'https://toogether.me/spotRegistAction',
+            url: 'checkID',
+            data: data,
+            async:false,
+            success: function (response) {
+            	console.log(response);
+            	if (response === 'fail') {
+	                //console.log('Spot registration successful:', response);
+	                //alert('이미 사용중인 아이디입니다.');
+	               	id.value='이미 사용중인 아이디입니다.';
+            	}else if(response === 'success'){
+            		//중복되는 아이디가 없으면 disabled 처리하고 중복체크 버튼을 숨긴다.
+            		id.disabled = true;
+            		document.getElementById('checkID').style.display = 'none';
+            		document.getElementById('checkOK').style.display = 'block';
+            	}
+            },
+            error: function (xhr, status, error) {
+                //console.error('Spot registration error:', error);
+                alert('오류');
+            }
+        });
+	}
+}
 // 이메일 체크하기
 function emailCheck(list) {
 	// console.log(list); //받아온 리스트 출력
@@ -155,17 +226,19 @@ function emailCheck(list) {
 
 	// 사용자가 입력한 이메일 가져오기
 	var useremail = $('#userEmail').val().trim().toLowerCase();
-	var emailExists = false;
 
 	for (var i = 0; i < emailList.length; i++) {
+		emailExists = false;
+
 		var listItem = emailList[i].trim().toLowerCase();
 		// console.log(emailList[0]);
 		// 사용자가 입력한 이메일이 리스트에 존재하면 emailExists = true
-		if (useremail == listItem) {
+		if (useremail === listItem) {
 			emailExists = true;
 			break;
 		}
 	}
+
 	// true이면 이미 사용중인 이메일 텍스트 출력
 	if (emailExists) {
 		$('#checkMessage').html('이미 사용중인 이메일입니다.');

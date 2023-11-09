@@ -39,9 +39,10 @@ public class UserService {
 	}
 
 	// 회원가입
-	public void join(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+	public int join(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		System.out.println("UserService 클래스의 join() 메소드");
 		SqlSession mapper = MySession.getSession();
+		UserVO vo = new UserVO();
 		// 폼에 입력된 값 가져오기
 		String userID = request.getParameter("userID");
 		String userName = request.getParameter("userName");
@@ -49,17 +50,33 @@ public class UserService {
 		String userBirth = request.getParameter("userBirth");
 		String userPhone = request.getParameter("userPhone");
 		String userPassword = request.getParameter("userPassword");
-		UserVO vo = new UserVO(userID, userName, userEmail, userBirth, userPhone, userPassword);
-		userdao.join(mapper, vo);
+		vo = new UserVO(userID, userName, userEmail, userBirth, userPhone, userPassword);
+		int exist = userdao.getUserID(mapper, userID);
+		if (exist == 0) {
+			userdao.join(mapper, vo);
+		} else {
+			ArrayList<UserVO> emailList = userdao.getEmailList(mapper);
+			request.setAttribute("emailList", emailList);
+			request.setAttribute("vo", vo);
+		}
 		mapper.commit();
 		mapper.close();
+		return exist;
+	}
+
+	// 아이디 중복 체크
+	public int checkID(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		System.out.println("UserService 클래스의 checkID() 메소드");
+		SqlSession mapper = MySession.getSession();
+		String userID = request.getParameter("userID");
+		return userdao.getUserID(mapper, userID);
 	}
 
 	// 로그인
-	public void login(HttpServletRequest request, HttpServletResponse response) {
+	public int login(HttpServletRequest request, HttpServletResponse response) {
 		SqlSession mapper = MySession.getSession();
 		HttpSession session = request.getSession(true);
-
+		int result = 0;
 		String userID = request.getParameter("userID");
 		String userPassword = request.getParameter("userPassword");
 		UserVO vo = new UserVO(userID, userPassword);
@@ -69,12 +86,13 @@ public class UserService {
 			request.setAttribute("userName", userName);
 			session.setAttribute("userID", userID);
 			session.setMaxInactiveInterval(1800);
-
+			result = 1;
 		}
 		System.out.println("로그인 유저: " + userID);
 
 		mapper.commit();
 		mapper.close();
+		return result;
 	}
 
 	// 로그아웃
@@ -91,6 +109,7 @@ public class UserService {
 		SqlSession mapper = MySession.getSession();
 		HttpSession session = request.getSession(true);
 		ArrayList<UserVO> emailList = userdao.getEmailList(mapper);
+		// session에 로그인 된 userID의 정보만 가져올 수 있다.
 		String userID = (String) session.getAttribute("userID");
 		UserVO vo = userdao.getUserVO(mapper, userID);
 		request.setAttribute("vo", vo);
