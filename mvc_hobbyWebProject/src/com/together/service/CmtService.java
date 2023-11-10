@@ -1,7 +1,9 @@
 package com.together.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,15 +25,19 @@ public class CmtService {
 
 	private CommentDAO cmtdao = CommentDAO.getInstance();
 
-	public void regist(HttpServletRequest request, HttpServletResponse response) {
+	public int regist(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		System.out.println("CmtService 클래스의 regist() 메소드");
 		SqlSession mapper = MySession.getSession();
-		int boardID = Integer.parseInt(request.getParameter("boardID"));
 		String userID = request.getParameter("userID");
-		String cmtContent = request.getParameter("cmtContent");
+		int boardID = Integer.parseInt(request.getParameter("boardID"));
+		String cmtContent = request.getParameter("content");
 		CommentVO vo = new CommentVO(0, boardID, userID, cmtContent);
-		System.out.println(vo);
-		cmtdao.regist(mapper, vo);
+
+		int result = cmtdao.regist(mapper, vo);
+
+		mapper.commit();
+		mapper.close();
+		return result;
 	}
 
 	public void getCmtList(HttpServletRequest request, HttpServletResponse response) {
@@ -62,5 +68,18 @@ public class CmtService {
 		int boardID = Integer.parseInt(request.getParameter("boardID"));
 		int count = cmtdao.selectCount(mapper, boardID);
 		request.setAttribute("count", count);
+		mapper.close();
+
+	}
+
+	// 삭제하기
+	public int cmtDelete(HttpServletRequest request, HttpServletResponse response) {
+		System.out.println("MvcboardService 클래스의 delete() 메서드");
+		SqlSession mapper = MySession.getSession();
+		int cmtID = Integer.parseInt(request.getParameter("cmtID"));
+		int result = cmtdao.cmtDelete(mapper, cmtID);
+		mapper.commit();
+		mapper.close();
+		return result;
 	}
 }

@@ -56,7 +56,12 @@
 	<delete id="delete" parameterType="int">
 		delete from board where boardID = #{boardID}
 	</delete>
-
+	<select id="heartCount">
+		update board set hearCount = heartCount + 1 where boardID = #{boardID}
+	</select>
+	<select id="heartDelete">
+		update board set hearCount = heartCount - 1 where boardID = #{boardID}
+	</select>
 	<!-- 답글이 삽입될 위치를 확보하기 위해 조건에 만족하는 seq를 1씩 증가시킨다. 
 	<update id="incrementSeq" parameterType="java.util.HashMap">
 		update board set seq = seq + 1 where gup = #{gup} and seq >= #{seq}

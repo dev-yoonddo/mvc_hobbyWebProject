@@ -18,8 +18,8 @@ import com.together.service.UserService;
 import com.together.vo.BoardVO;
 
 @WebServlet(urlPatterns = { "/mainPage", "/join", "/joinAction", "/login", "/loginAction", "/logout", "/community",
-		"/searchPage", "/view", "/write", "/writeAction", "/update", "/updateAction", "/deleteAction", "/userUpdate",
-		"/userUpdateAction", "/checkID", "/cmt", "/cmt/delete" })
+		"/searchPage", "/view", "/view/heart", "/write", "/writeAction", "/update", "/updateAction", "/deleteAction",
+		"/userUpdate", "/userUpdateAction", "/checkID", "/cmt", "/cmt/delete" })
 public class HomeController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
@@ -163,9 +163,18 @@ public class HomeController extends HttpServlet {
 //			조회수를 증가시키는 메소드를 호출한다.
 			bdservice.increment(request, response);
 //			조회수를 증가시킨 글 1건을 얻어오는 메소드를 호출한다.
-			bdservice.getBoardVO(request, response);
-
+//			bdservice.getBoardVO(request, response);
+//			해당 글의 댓글리스트를 가져오는 메서드
+			cmtservice.getCmtList(request, response);
 			redirect = "view";
+			break;
+		case "/view/heart":
+			int heart = bdservice.heart(request, response);
+			if (heart == 1) {
+				script.print("success");
+			}
+			script.flush();
+			script.close();
 			break;
 		case "/update":
 			System.out.println("업데이트");
@@ -192,9 +201,22 @@ public class HomeController extends HttpServlet {
 			break;
 
 		case "/cmt":
-			cmtservice.regist(request, response);
-			System.out.println(request.getParameter("boardID"));
-			redirect = "view";
+			int cmt = cmtservice.regist(request, response);
+			System.out.println(cmt);
+			if (cmt == 1) {
+				script.print("success");
+			}
+			script.flush();
+			script.close();
+			break;
+
+		case "/cmt/delete":
+			int cmtDel = cmtservice.cmtDelete(request, response);
+			if (cmtDel == 1) {
+				script.print("success");
+			}
+			script.flush();
+			script.close();
 			break;
 		}
 

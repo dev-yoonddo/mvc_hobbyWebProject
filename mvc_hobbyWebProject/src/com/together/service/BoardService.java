@@ -10,10 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.ibatis.session.SqlSession;
 
 import com.together.dao.BoardDAO;
-import com.together.dao.CommentDAO;
 import com.together.session.MySession;
 import com.together.vo.BoardVO;
-import com.together.vo.CommentVO;
+import com.together.vo.HeartVO;
 
 public class BoardService {
 
@@ -27,7 +26,6 @@ public class BoardService {
 	}
 
 	private BoardDAO dao = BoardDAO.getInstance();
-	private CommentDAO cmtdao = CommentDAO.getInstance();
 	DownloadAction down = new DownloadAction();
 
 //	컨트롤러에 insertOK.nhn 이라는 요청이 들어오면 컨트롤러에서 호출하는 메소드로 테이블에 저장할 메인글이 
@@ -68,6 +66,7 @@ public class BoardService {
 		request.setAttribute("boardlist", boardlist);
 		System.out.println(category);
 		System.out.println(boardlist);
+		mapper.commit();
 		mapper.close();
 
 	}
@@ -119,7 +118,8 @@ public class BoardService {
 		int boardID = Integer.parseInt(request.getParameter("boardID"));
 //		조회수를 증가시키는 메소드를 호출한다.
 		dao.increment(mapper, boardID);
-
+		BoardVO vo = dao.getBoardVO(mapper, boardID);
+		request.setAttribute("vo", vo);
 		mapper.commit();
 		mapper.close();
 	}
@@ -142,7 +142,7 @@ public class BoardService {
 		request.setAttribute("content", vo);
 //		request.setAttribute("currentPage", currentPage);
 //		request.setAttribute("enter", "\r\n");
-
+		mapper.commit();
 		mapper.close();
 	}
 
@@ -151,13 +151,11 @@ public class BoardService {
 		SqlSession mapper = MySession.getSession();
 		int boardID = Integer.parseInt(request.getParameter("boardID"));
 		BoardVO vo = dao.getBoardVO(mapper, boardID);
-		// 해당 글의 댓글 리스트와 갯수 가져오기
-		ArrayList<CommentVO> cmtlist = cmtdao.selectCmtList(mapper, boardID);
 		request.setAttribute("vo", vo);
 		request.setAttribute("boardID", boardID);
-		request.setAttribute("cmtlist", cmtlist);
 
 		System.out.println(boardID);
+		mapper.commit();
 		mapper.close();
 	}
 
@@ -192,5 +190,23 @@ public class BoardService {
 		mapper.commit();
 		mapper.close();
 
+	}
+
+	// 사용자가 하트를 이미 눌렀는지 누르지않았는지 확인
+	public int heart(HttpServletRequest request, HttpServletResponse response) {
+		SqlSession mapper = MySession.getSession();
+		int boardID = Integer.parseInt(request.getParameter("boardID"));
+		String userID = request.getParameter("userID");
+		HeartVO vo = new HeartVO(userID, boardID);
+		int check = dao.checkHeart(mapper, vo);
+		if (check == 1) {
+			request.setAttribute("exist", "Y");
+		} else {
+			request.setAttribute("exist", "N");
+		}
+		int result = dao.heart(mapper, vo);
+		mapper.commit();
+		mapper.close();
+		return result;
 	}
 }

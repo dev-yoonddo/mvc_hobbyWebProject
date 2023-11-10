@@ -16,7 +16,7 @@
 		select count(*) from comment where boardID = #{boardID}
 	</select>
 	<!-- 해당 글의 댓글 목록을 가져온다 -->
-	<select id="selectCmtList" parameterType="int" resultType="cmtVO">
+	<select id="selectCmtList" parameterType="java.util.ArrayList" resultType="cmtVO">
 		select * from comment where boardID = #{boardID} and cmtAvailable = 1 order by cmtID desc
 	</select>
 	<!-- 댓글 1건을 얻어온다. -->
@@ -36,7 +36,7 @@
 	-->
 	
 	<!-- 댓글 1건을 삭제한다. -->
-	<delete id="delete" parameterType="int">
+	<delete id="cmtDelete" parameterType="int"  >
 		delete from comment where cmtID = #{cmtID}
 	</delete>
 

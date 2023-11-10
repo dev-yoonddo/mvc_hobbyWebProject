@@ -359,7 +359,7 @@ table caption{
 <!-- section -->
 <section>
 <c:set var="userID" value="<%=userID %>"/>
-	<div class="board-container">
+	<div class="board-container" id="container">
 		<div class="inquiry">
 			<div class="row"><br>
 				<c:set var="vo" value="${vo}"/>		
@@ -387,7 +387,16 @@ table caption{
 						<div id="count-item">
 							<div id="count">
 								<span>
+								<c:choose>
+									<c:when test="${exist == 'Y' }">								
 							    	<i id="heart2" class="fa-solid fa-heart"onclick="heartAction()"></i>&nbsp;${vo.heartCount}
+							    	</c:when>
+							    	<c:otherwise>
+							    	<i id="heart1" class="fa-regular fa-heart" onclick="heartAction()"></i>&nbsp;${vo.heartCount}
+							    	
+							    	</c:otherwise>
+							    	
+								</c:choose>
 								</span>&nbsp;&nbsp;
 								<span><i class="fa-solid fa-eye"></i>&nbsp;${vo.viewCount}</span>
 							</div>
@@ -485,51 +494,57 @@ table caption{
 				</div>
 			</div>
 		</div>
-		
-		<h5 style="font-size: 15pt; color: #646464; float: left;">댓글 (${cmtlist.size()})<br></h5><hr id="cmt-line" style="width: 1000px;"><br>
-		
-        <!-- 답변쓰기 버튼을 눌렀을 때만 답변쓰기 섹션이 나타나도록 설정 -->
-		<div id="cmt-write" style="display: none; width: 600px; height: 220px;"> 
-	          <form method="post" action="cmt">
-	          <input type="hidden" name="boardID" value="${vo.boardID}">
-		          <table class="cmt-table" style="height: 100px; border-style: none;">
-		             <tbody>
-		                <tr>
-		                   <td><input type="text" placeholder="댓글을 입력하세요" name="cmtContent" maxlength="60" style="width: 600px; height: 150px; font-size: 12pt;"></td>
-		                </tr>
-		             </tbody>
-		          </table>
-		      <button type="submit" class="btn-blue" id="cmt-cpl"><span>완료</span></button>
-		      </form>
-	   </div><br><br>
-	   
-	<!-- 댓글 리스트 -->
-	<div class="cmt-view" style="height: auto;">
-		<div class="row" style="width: 600px; height: auto;">
-			<c:forEach var="cmt" items="${cmtlist}">
-			    <div class="cmt-list" style="width: 600px; height: 110px;">
-			    <div style="display: flex;">
-			    	<div class="cmt-icon" style="justify-content: center; padding: 10px;">
-	               		<i style="font-size: 30pt;"class="fa-regular fa-face-smile"></i>
-	               	</div>
-               		<table class="cmt-table" style="width: 600px;">
-               		<tr style="height: 30px; table-layout:fixed; ">
-               			<td align="left" style="width:30%;">${cmt.userID}</td>
-               			<td align="right" style="width:70%;">${cmt.cmtDate }</td>
-               		</tr>
-               		<tr style="height: auto; font-weight: 550;">
-               			<td colspan="2">${cmt.cmtContent}</td>
-               		</tr>		               		
-		           	</table>
-			    </div>
-			    <c:if test="${not empty userID and userID == cmt.userID or userID == 'manager'}">
-			         <button type="button" class="btn-blue" id="cmt-btn" onclick="if(confirm('답글을 삭제하시겠습니까?')){location.href='cmt/delete?boardID=${vo.boardID}&cmtID=${cmt.cmtID}'}"><span>삭제</span></button>
-			    </c:if>
-				</div>
-			</c:forEach>
-         </div>
+		<div id="cmtSection">
+			<h5 style="font-size: 15pt; color: #646464; float: left;">댓글 (${cmtlist.size()})<br></h5><hr id="cmt-line" style="width: 1000px;"><br>
+			
+	        <!-- 답변쓰기 버튼을 눌렀을 때만 답변쓰기 섹션이 나타나도록 설정 -->
+			<div id="cmt-write" style="display: none; width: 600px; height: 220px;"> 
+		          <input type="hidden" name="boardID" value="${vo.boardID}">
+			          <table class="cmt-table" style="height: 100px; border-style: none;">
+			             <tbody>
+			                <tr>
+			                   <td><input type="text" placeholder="댓글을 입력하세요" name="cmtContent" id="cmtContent" maxlength="60" style="width: 600px; height: 150px; font-size: 12pt;"></td>
+			                </tr>
+			             </tbody>
+			          </table>
+			      <button type="submit" class="btn-blue" id="cmt-cpl" onclick="registCmt(cmtContent)"><span>완료</span></button>
+		  	</div><br><br>
+		   
+			<!-- 댓글 리스트 -->
+			<div class="cmt-view" style="height: auto;">
+				<div class="row" style="width: 600px; height: auto;">
+				<c:if test="${not empty cmtlist}">
+					<c:forEach var="cmt" items="${cmtlist}">
+					<c:set var="cmtDate" value="${fn:substring(cmt.cmtDate,0,16)}"/>
+					
+					    <div class="cmt-list" style="width: 600px; height: 110px;">
+					    <div style="display: flex;">
+					    	<div class="cmt-icon" style="justify-content: center; padding: 10px;">
+			               		<i style="font-size: 30pt;"class="fa-regular fa-face-smile"></i>
+			               	</div>
+		               		<table class="cmt-table" style="width: 600px;">
+		               		<tr style="height: 30px; table-layout:fixed; ">
+		               			<td align="left" style="width:30%;">${cmt.userID}</td>
+		               			<td align="right" style="width:70%;">${cmtDate }</td>
+		               		</tr>
+		               		<tr style="height: auto; font-weight: 550;">
+		               			<td colspan="2">${cmt.cmtContent}</td>
+		               		</tr>		               		
+				           	</table>
+					    </div>
+					    <c:if test="${not empty userID and userID == cmt.userID or userID == 'manager'}">
+					         <button type="button" class="btn-blue" id="cmt-btn" onclick="deleteCmt(${cmt.cmtID})"><span>삭제</span></button>
+					    </c:if>
+						</div>
+					</c:forEach>
+					</c:if>
+					<c:if test="${empty cmtlist }">
+						아직 댓글이 없어요
+					</c:if>
+		         </div>
+			</div>
+		</div>
 	</div>
-</div>
 </section>
 <!-- section end -->
 
@@ -547,43 +562,106 @@ table caption{
 <!-- footer end -->
 
 <script>
+var userID = '${userID}';
+var boardID = '${vo.boardID}';
+
+//비동기식 댓글달기
+function registCmt(content){
+	var data = {
+		content: content.value,
+		userID : userID,
+		boardID : boardID
+	};
+	
+	$.ajax({
+	    type: 'POST',
+	    //url: 'https://toogether.me/spotRegistAction',
+	    url: 'cmt',
+	    data: data,
+	    success: function (response) {
+	    	if (response === 'success') {
+	         	//alert('성공');
+	        	reload(); //댓글부분만 새로고침하는 메서드 실행
+	    	}else{
+	         	//alert('실패');
+	    	}
+	    },
+	    error: function (xhr, status, error) {
+	        alert('오류');
+	    }
+	});
+}
+
+//비동기식 댓글삭제
+function deleteCmt(cmtID){
+	var data = {
+		cmtID : cmtID,
+		userID : userID,
+		boardID : boardID
+	};
+	console.log(cmtID);
+	if(confirm('댓글을 삭제하시겠습니까?') == true){
+		$.ajax({
+		    type: 'POST',
+		    //url: 'https://toogether.me/spotRegistAction',
+		    url: 'cmt/delete',
+		    data: data,
+		    success: function (response) {
+		    	if (response === 'success') {
+		         	//alert('성공');
+		        	reload(); //댓글부분만 새로고침하는 메서드 실행
+		    	}else{
+		         	//alert('실패');
+		    	}
+		    },
+		    error: function (xhr, status, error) {
+		        alert('오류');
+		    }
+		});
+	}
+}
+//하트 클릭 또는 취소
+function heartAction(){
+	console.log(userID);
+	if(userID === null || userID === ''){
+		alert('로그인이 필요합니다');
+		location.href='login';
+	}else{
+		var data = {
+	          userID : userID,
+	          boardID : boardID
+	    };
+	    $.ajax({
+	        type: 'POST',
+	        url: 'view/heart',
+	        data: data,
+	        success: function (response) {
+		    	if (response === 'success') {
+		    		alert('성공');
+		    		reload();
+		    	}else{
+		    		alert('실패');
+		    		
+		    	}
+	        },
+	        error: function (xhr, status, error) {
+	            //console.error('Spot registration error:', error);
+	            alert('오류');
+	        }
+	    });
+	}
+}
+//요소 새로고침
+function reload(){
+	$('#container').load(location.href+' #container');
+}
+
 //댓글쓰기를 클릭하면 댓글 입력 창 보이기
 function cmtAction(){
 	document.getElementById('cmt-write').style.display = 'block';
 	document.getElementById('cmt-write-btn').style.display = 'none';
 }
-//하트 클릭 또는 취소완료시 count-item 부분만 새로고침
-function reloadHeart(){
-	$('#count-item').load(location.href+' #count-item');
-}
-//하트 클릭 또는 취소
-function heartAction(){
-	var data = {
-          boardID: ${vo.boardID}
-    };
-    $.ajax({
-        type: 'POST',
-        url: 'heartAction.jsp',
-        data: data,
-        success: function (response) {
-         	if(response.includes("userID null")){
-         		alert('로그인을 해주세요');
-         		window.open('loginPopUp', 'Login', 'width=450, height=500, top=50%, left=50%');
-       		}else if(response.includes("boardID null")){
-         		alert('로그인을 해주세요');
-       		}else if(response.includes("database error")){
-         		alert('데이터베이스 오류');
-       		}else{
-             //하트 클릭 또는 취소가 완료되면 그 부분만 새로고침
-           		reloadHeart();
-       		}
-        },
-        error: function (xhr, status, error) {
-            //console.error('Spot registration error:', error);
-            alert('좋아요 오류');
-        }
-    });
-}
+
 //파일 다운로드 submit
 function submit(){
 	let form = document.getElementById("download_form"); //form sumbit을 위해 form id를 가져온다.

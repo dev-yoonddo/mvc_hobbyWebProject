@@ -23,9 +23,10 @@ public class CommentDAO {
 
 //	MvcboardService 클래스에서 호출되는 mapper와 테이블에 저장할 메인글 정보가 저장된 객체를 넘겨받고 메인글을
 //	테이블에 저장하는 mvcboard.xml 파일의 insert sql 명령을 실행하는 메소드
-	public void regist(SqlSession mapper, CommentVO vo) {
+	public int regist(SqlSession mapper, CommentVO vo) {
 		System.out.println("CommentDAO 클래스의 insert() 메소드");
-		mapper.insert("regist", vo);
+		int result = mapper.insert("regist", vo);
+		return result;
 	}
 
 //	MvcboardService 클래스에서 호출되는 mapper를 넘겨받고 전체 글의 개수를 얻어오는 mvcboard.xml 파일의
@@ -43,7 +44,12 @@ public class CommentDAO {
 	}
 
 	public CommentVO getCmtVO(SqlSession mapper, int cmtID) {
-		System.out.println("CommentDAO 클래스의 getCmtVO() 메소드");
+		System.out.println("CommentDAO 클래스의 getCmtVO() 메서드");
 		return (CommentVO) mapper.selectOne("getCmtVO", cmtID);
+	}
+
+	public int cmtDelete(SqlSession mapper, int cmtID) {
+		System.out.println("CommentDAO 클래스의 delete() 메서드");
+		return mapper.delete("cmtDelete", cmtID);
 	}
 }

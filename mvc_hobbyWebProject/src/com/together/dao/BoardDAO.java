@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import org.apache.ibatis.session.SqlSession;
 
 import com.together.vo.BoardVO;
+import com.together.vo.HeartVO;
 
 public class BoardDAO {
 
@@ -100,4 +101,28 @@ public class BoardDAO {
 		mapper.delete("delete", boardID);
 	}
 
+	public int checkHeart(SqlSession mapper, HeartVO vo) {
+		if (mapper.selectOne("heartSelect", vo) != null) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
+
+	public int heart(SqlSession mapper, HeartVO vo) {
+		System.out.println("heart()");
+		int result = 0;
+		if (mapper.selectOne("heartSelect", vo) == null) {
+			result = mapper.insert("heart", vo);
+			if (result == 1) {
+				mapper.update("heartCount", vo.getBoardID());
+			}
+		} else {
+			result = mapper.delete("minusHeart", vo);
+			if (result == 1) {
+				mapper.update("heartDelete", vo.getBoardID());
+			}
+		}
+		return result;
+	}
 }

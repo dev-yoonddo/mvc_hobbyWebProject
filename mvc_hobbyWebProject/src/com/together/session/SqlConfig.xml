@@ -9,6 +9,7 @@
 		<typeAlias type="com.together.vo.UserVO" alias="userVO" />
 		<typeAlias type="com.together.vo.BoardVO" alias="boardVO" />
 		<typeAlias type="com.together.vo.CommentVO" alias="cmtVO" />
+		<typeAlias type="com.together.vo.HeartVO" alias="heartVO" />
 	</typeAliases>
 	
 	<environments default="development">
@@ -27,6 +28,7 @@
 		<mapper resource="com/together/session/user.xml" />
 		<mapper resource="com/together/session/board.xml" />
 		<mapper resource="com/together/session/comment.xml" />
+		<mapper resource="com/together/session/heart.xml" />
 	</mappers>
 	
 </configuration>

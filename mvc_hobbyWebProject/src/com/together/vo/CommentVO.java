@@ -66,4 +66,10 @@ public class CommentVO {
 		this.cmtDate = cmtDate;
 	}
 
+	@Override
+	public String toString() {
+		return "CommentVO [cmtID=" + cmtID + ", boardID=" + boardID + ", userID=" + userID + ", cmtContent="
+				+ cmtContent + ", cmtAvailable=" + cmtAvailable + ", cmtDate=" + cmtDate + "]";
+	}
+
 }
