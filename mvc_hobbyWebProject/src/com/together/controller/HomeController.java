@@ -14,6 +14,7 @@ import com.together.service.BoardService;
 import com.together.service.CmtService;
 import com.together.service.ErrorMessage;
 import com.together.service.FileUploadService;
+import com.together.service.HeartService;
 import com.together.service.UserService;
 import com.together.vo.BoardVO;
 
@@ -27,6 +28,7 @@ public class HomeController extends HttpServlet {
 	private UserService urservice = UserService.getInstance();
 	private BoardService bdservice = BoardService.getInstance();
 	private CmtService cmtservice = CmtService.getInstance();
+	private HeartService htservice = HeartService.getInstance();
 	private ErrorMessage error = ErrorMessage.getInstance();
 
 	public HomeController() {
@@ -59,7 +61,7 @@ public class HomeController extends HttpServlet {
 		String url = request.getRequestURI();
 		String contextPath = request.getContextPath();
 		String context = url.substring(contextPath.length());
-//		System.out.println(context);
+
 //		요청받은 페이지 경로를 만든다.
 		String viewPage = "/WEB-INF/";
 		String paramName = null;
@@ -87,7 +89,6 @@ public class HomeController extends HttpServlet {
 			error.errorTest(err, request, response);
 			break;
 		case "/checkID":
-			// System.out.println("컨트롤러 요청 성공");
 			int result = urservice.checkID(request, response);
 
 			// 사용자가 입력한 아이디와 동일한 아이디가 존재하면 1, 존재하지 않으면 0
@@ -134,12 +135,6 @@ public class HomeController extends HttpServlet {
 			bdservice.getBoardList(request, response);
 			redirect = "searchPage";
 			break;
-		/*
-		 * case "/increment.nhn": // 조회수를 증가시키는 메소드를 호출한다. service.increment(request,
-		 * response);
-		 * 
-		 * viewPage += "increment"; break;
-		 */
 		case "/write":
 			redirect = "write";
 			break;
@@ -151,27 +146,34 @@ public class HomeController extends HttpServlet {
 //				insert.jsp에서 폼에 입력한 데이터는 actionDo() 메소드의 request 객체에 저장된다.
 //				insert.jsp에서 폼에 입력한 데이터를 테이블에 저장하는 메소드를 호출한다.
 			bdservice.insert(vo, request, response);
-//			request.setAttribute("category", vo.getBoardCategory());
-//			service.selectAllList(request, response);
-//			viewPage = "searchPage";
-//			viewMain++;
 			redirect = "searchPage";
 			paramName = "category";
 			param = vo.getBoardCategory();
 			break;
 		case "/view":
-//			조회수를 증가시키는 메소드를 호출한다.
+//			조회수를 증가시키고 글을 가져오는 메서드를 호출한다.
 			bdservice.increment(request, response);
-//			조회수를 증가시킨 글 1건을 얻어오는 메소드를 호출한다.
-//			bdservice.getBoardVO(request, response);
-//			해당 글의 댓글리스트를 가져오는 메서드
+//			사용자가 해당 글에 하트를 눌렀는지 검사하는 메서드를 호출한다.
+			htservice.checkHeart(request, response);
+//			해당 글의 댓글리스트를 가져오는 메서드를 호출한다.
 			cmtservice.getCmtList(request, response);
 			redirect = "view";
 			break;
 		case "/view/heart":
-			int heart = bdservice.heart(request, response);
+//			사용자가 하트를 클릭하면 하트를 이미 눌렀는지, 누르지 않았는지 확인하고
+//			이미 눌렀으면 취소, 누르지 않았으면 하트를 누르는 메서드를 호출한다.
+			int heart = htservice.heart(request, response);
+			int heartResult = 0;
 			if (heart == 1) {
-				script.print("success");
+				heartResult = bdservice.heartCount(request, response);
+				if (heartResult > 0) {
+					script.print("success");
+				}
+			} else if (heart == 2) {
+				heartResult = bdservice.heartDelete(request, response);
+				if (heartResult > 0) {
+					script.print("success");
+				}
 			}
 			script.flush();
 			script.close();
@@ -183,9 +185,7 @@ public class HomeController extends HttpServlet {
 			break;
 
 		case "/updateAction":
-			// System.out.println("update success: " + request.getParameter("boardID"));
 			BoardVO vo2 = upload.fileupload(request, response);
-			System.out.println(vo2);
 			bdservice.update(vo2, request, response);
 			// service.getBoardVO(request, response);
 			redirect = "view";

@@ -389,13 +389,11 @@ table caption{
 								<span>
 								<c:choose>
 									<c:when test="${exist == 'Y' }">								
-							    	<i id="heart2" class="fa-solid fa-heart"onclick="heartAction()"></i>&nbsp;${vo.heartCount}
+							    	<i id="heart2" class="fa-solid fa-heart" onclick="heartAction('exist')"></i>&nbsp;${vo.heartCount}
 							    	</c:when>
 							    	<c:otherwise>
-							    	<i id="heart1" class="fa-regular fa-heart" onclick="heartAction()"></i>&nbsp;${vo.heartCount}
-							    	
+							    	<i id="heart1" class="fa-regular fa-heart" onclick="heartAction('none')"></i>&nbsp;${vo.heartCount}
 							    	</c:otherwise>
-							    	
 								</c:choose>
 								</span>&nbsp;&nbsp;
 								<span><i class="fa-solid fa-eye"></i>&nbsp;${vo.viewCount}</span>
@@ -581,7 +579,7 @@ function registCmt(content){
 	    success: function (response) {
 	    	if (response === 'success') {
 	         	//alert('성공');
-	        	reload(); //댓글부분만 새로고침하는 메서드 실행
+	        	reload(); //새로고침하는 메서드 실행
 	    	}else{
 	         	//alert('실패');
 	    	}
@@ -609,7 +607,7 @@ function deleteCmt(cmtID){
 		    success: function (response) {
 		    	if (response === 'success') {
 		         	//alert('성공');
-		        	reload(); //댓글부분만 새로고침하는 메서드 실행
+		        	reload(); //새로고침하는 메서드 실행
 		    	}else{
 		         	//alert('실패');
 		    	}
@@ -621,15 +619,17 @@ function deleteCmt(cmtID){
 	}
 }
 //하트 클릭 또는 취소
-function heartAction(){
+function heartAction(value){
 	console.log(userID);
+	console.log(value);
 	if(userID === null || userID === ''){
 		alert('로그인이 필요합니다');
 		location.href='login';
 	}else{
 		var data = {
 	          userID : userID,
-	          boardID : boardID
+	          boardID : boardID,
+	          value : value
 	    };
 	    $.ajax({
 	        type: 'POST',
@@ -637,11 +637,10 @@ function heartAction(){
 	        data: data,
 	        success: function (response) {
 		    	if (response === 'success') {
-		    		alert('성공');
-		    		reload();
+		    		//alert('성공');
+		    		reload(); //새로고침
 		    	}else{
-		    		alert('실패');
-		    		
+		    		//alert('실패');
 		    	}
 	        },
 	        error: function (xhr, status, error) {
@@ -653,7 +652,7 @@ function heartAction(){
 }
 //요소 새로고침
 function reload(){
-	$('#container').load(location.href+' #container');
+		$('#container').load(location.href+' #container');
 }
 
 //댓글쓰기를 클릭하면 댓글 입력 창 보이기

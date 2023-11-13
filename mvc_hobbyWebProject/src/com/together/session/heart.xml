@@ -2,23 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.together.vo.HeartVO">
 	<!-- 하트 있는지 검사 -->
-	<select id="heartSelect" parameterType="heartVO" >
-		select * from heart where userID = #{userID} , boardID = #{boardID}
+	<select id="checkHeart" parameterType="heartVO" resultType="heartVO" >
+		select * from heart where userID = #{userID} and boardID = #{boardID}
 	</select>
 	<!-- 하트 클릭 -->
 	<insert id="heart" parameterType="heartVO">
-		insert into heart (userId, boardID)
-		values (#{userId}, #{boardID})
+		insert into heart (userID, boardID)
+		values (#{userID}, #{boardID})
 	</insert>
-	<!-- 조회수를 증가시킨다. -->
-	<update id="count" parameterType="int">
-		update board set heartCount = heartCount + 1 where boardID = #{boardID}
-	</update>
 	
 	<!-- 하트 취소 -->
-	<delete id="minusHeart" parameterType="heartVO">
-		delete from heart where boardID = #{boardID} , userID = #{userID}
+	<delete id="deleteHeart" parameterType="heartVO">
+		delete from heart where userID = #{userID} and boardID = #{boardID}
 	</delete>
+
 
 	<!-- 답글이 삽입될 위치를 확보하기 위해 조건에 만족하는 seq를 1씩 증가시킨다. 
 	<update id="incrementSeq" parameterType="java.util.HashMap">

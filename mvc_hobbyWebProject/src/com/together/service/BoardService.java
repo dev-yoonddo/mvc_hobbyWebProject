@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.ibatis.session.SqlSession;
 
 import com.together.dao.BoardDAO;
+import com.together.dao.HeartDAO;
 import com.together.session.MySession;
 import com.together.vo.BoardVO;
-import com.together.vo.HeartVO;
 
 public class BoardService {
 
@@ -26,7 +26,8 @@ public class BoardService {
 	}
 
 	private BoardDAO dao = BoardDAO.getInstance();
-	DownloadAction down = new DownloadAction();
+	private HeartDAO htdao = HeartDAO.getInstance();
+	public DownloadAction down = new DownloadAction();
 
 //	컨트롤러에 insertOK.nhn 이라는 요청이 들어오면 컨트롤러에서 호출하는 메소드로 테이블에 저장할 메인글이 
 //	저장된 request 객체를 넘겨받고 mapper를 얻어온 후 DAO 클래스의 insert sql 명령을 실행하는 메소드를 호출하는 
@@ -124,28 +125,6 @@ public class BoardService {
 		mapper.close();
 	}
 
-//	컨트롤러에 contentView.nhn으로 요청이 들어오면 컨트롤러에서 호출하는 메소드로 조회수를 증가시킨 글번호
-//	넘겨받고 mapper를 얻어온 후 DAO 클래스의 조회수를 증가시킨 글 1건을 얻어와서 request 영역에 저장하는 메소드
-	public void contentView(HttpServletRequest request, HttpServletResponse response) {
-		System.out.println("MvcboardService 클래스의 selectByIdx() 메소드");
-		SqlSession mapper = MySession.getSession();
-
-//		request 객체로 넘어오는 조회수를 증가시킨 글번호와 돌아갈 페이지 번호를 받는다.
-		int boardID = Integer.parseInt(request.getParameter("boardID"));
-//		int currentPage = Integer.parseInt(request.getParameter("currentPage"));
-//		조회수를 증가시킨 글 1건을 얻어와 BoardVO 클래스 객체에 저장한다.
-		BoardVO vo = dao.getBoardVO(mapper, boardID);
-//		System.out.println(vo);
-
-//		브라우저에 표시할 글이 저장된 객체, 작업 후 돌아갈 페이지 번호, 줄바꿈에 사용할 이스케이프 시퀀스를
-//		request 영역에 저장한다.
-		request.setAttribute("content", vo);
-//		request.setAttribute("currentPage", currentPage);
-//		request.setAttribute("enter", "\r\n");
-		mapper.commit();
-		mapper.close();
-	}
-
 	public void getBoardVO(HttpServletRequest request, HttpServletResponse response) {
 		System.out.println("MvcboardService 클래스의 update() 메서드");
 		SqlSession mapper = MySession.getSession();
@@ -153,7 +132,6 @@ public class BoardService {
 		BoardVO vo = dao.getBoardVO(mapper, boardID);
 		request.setAttribute("vo", vo);
 		request.setAttribute("boardID", boardID);
-
 		System.out.println(boardID);
 		mapper.commit();
 		mapper.close();
@@ -192,19 +170,21 @@ public class BoardService {
 
 	}
 
-	// 사용자가 하트를 이미 눌렀는지 누르지않았는지 확인
-	public int heart(HttpServletRequest request, HttpServletResponse response) {
+	public int heartCount(HttpServletRequest request, HttpServletResponse response) {
 		SqlSession mapper = MySession.getSession();
 		int boardID = Integer.parseInt(request.getParameter("boardID"));
-		String userID = request.getParameter("userID");
-		HeartVO vo = new HeartVO(userID, boardID);
-		int check = dao.checkHeart(mapper, vo);
-		if (check == 1) {
-			request.setAttribute("exist", "Y");
-		} else {
-			request.setAttribute("exist", "N");
-		}
-		int result = dao.heart(mapper, vo);
+		int result = dao.heartCount(mapper, boardID);
+
+		mapper.commit();
+		mapper.close();
+		return result;
+	}
+
+	public int heartDelete(HttpServletRequest request, HttpServletResponse response) {
+		SqlSession mapper = MySession.getSession();
+		int boardID = Integer.parseInt(request.getParameter("boardID"));
+		int result = dao.heartDelete(mapper, boardID);
+
 		mapper.commit();
 		mapper.close();
 		return result;

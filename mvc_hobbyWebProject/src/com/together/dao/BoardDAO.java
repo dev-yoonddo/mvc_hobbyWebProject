@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import org.apache.ibatis.session.SqlSession;
 
 import com.together.vo.BoardVO;
-import com.together.vo.HeartVO;
 
 public class BoardDAO {
 
@@ -15,7 +14,7 @@ public class BoardDAO {
 	private Connection conn; // 자바와 데이터베이스 연결
 	private ResultSet rs; // 결과값 받아오기
 
-	private BoardDAO() {
+	protected BoardDAO() {
 	}
 
 	public static BoardDAO getInstance() {
@@ -62,9 +61,9 @@ public class BoardDAO {
 	 */
 //	MvcboardService 클래스에서 호출되는 mapper와 조회수를 증가시킬 글번호를 넘겨받고 조회수를 증가시키는
 //	mvcboard.xml 파일의 update sql 명령을 실행하는 메소드
-	public void increment(SqlSession mapper, int boardID) {
+	public int increment(SqlSession mapper, int boardID) {
 		System.out.println("BoardDAO 클래스의 increment() 메소드");
-		mapper.update("increment", boardID);
+		return mapper.update("increment", boardID);
 	}
 
 //	MvcboardService 클래스에서 호출되는 mapper와 조회수를 증가시킨 글번호를 넘겨받고 조회수를 증가시킨 글 1건을
@@ -96,33 +95,17 @@ public class BoardDAO {
 	 * 
 	 * // Commit the transaction mapper.commit(); } finally { mapper.close(); }
 	 */
+
 	public void delete(SqlSession mapper, int boardID) {
 		System.out.println("BoardDAO클래스의 delete() 메서드");
 		mapper.delete("delete", boardID);
 	}
 
-	public int checkHeart(SqlSession mapper, HeartVO vo) {
-		if (mapper.selectOne("heartSelect", vo) != null) {
-			return 1;
-		} else {
-			return 0;
-		}
+	public int heartCount(SqlSession mapper, int boardID) {
+		return mapper.update("heartCount", boardID);
 	}
 
-	public int heart(SqlSession mapper, HeartVO vo) {
-		System.out.println("heart()");
-		int result = 0;
-		if (mapper.selectOne("heartSelect", vo) == null) {
-			result = mapper.insert("heart", vo);
-			if (result == 1) {
-				mapper.update("heartCount", vo.getBoardID());
-			}
-		} else {
-			result = mapper.delete("minusHeart", vo);
-			if (result == 1) {
-				mapper.update("heartDelete", vo.getBoardID());
-			}
-		}
-		return result;
+	public int heartDelete(SqlSession mapper, int boardID) {
+		return mapper.update("heartDelete", boardID);
 	}
 }
