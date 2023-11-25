@@ -1,1 +1,1 @@
-# mvc_hobbyWebProject
+프로젝트들을 SPING 프로젝트로 리팩토링 하기 전 MVC패턴으로 다시 재구성한 프로젝트입니다.
