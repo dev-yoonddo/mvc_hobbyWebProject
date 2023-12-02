@@ -1,1 +1,1 @@
-# mvc_hobbyWebProject
+프로젝트들을 SPRING 프로젝트로 재구성 하기 전 MVC패턴으로 다시 재구성한 프로젝트입니다.
