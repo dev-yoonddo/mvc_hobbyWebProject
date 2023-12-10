@@ -18,8 +18,17 @@ import org.apache.tomcat.util.http.fileupload.util.Streams;
 import com.together.vo.BoardVO;
 
 public class FileUploadService {
+	private static FileUploadService instance = new FileUploadService();
+
+	private FileUploadService() {
+	}
+
+	public static FileUploadService getInstance() {
+		return instance;
+	}
+
 	// 파일 업로드가 필요한 form이 전송됐을 때 실행되는 메서드
-	public BoardVO fileupload(HttpServletRequest request, HttpServletResponse response) {
+	public BoardVO upload(HttpServletRequest request, HttpServletResponse response) {
 		int boardID = 0;
 		String userID = null;
 		String boardCategory = null;
@@ -80,6 +89,7 @@ public class FileUploadService {
 				e.printStackTrace();
 			}
 		}
+
 		// 데이터들을 vo객체에 저장한 뒤 리턴한다.
 		BoardVO vo = new BoardVO(boardID, userID, boardTitle, boardContent, boardCategory, filename, fileRealname);
 

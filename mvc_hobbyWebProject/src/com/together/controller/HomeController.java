@@ -30,6 +30,7 @@ public class HomeController extends HttpServlet {
 	private CmtService cmtservice = CmtService.getInstance();
 	private HeartService htservice = HeartService.getInstance();
 	private ErrorMessage error = ErrorMessage.getInstance();
+	private FileUploadService fileupload = FileUploadService.getInstance();
 
 	public HomeController() {
 		super();
@@ -54,7 +55,6 @@ public class HomeController extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html; charset=UTF-8");
 //		System.out.println(request.getParameter("name"));
-		FileUploadService upload = new FileUploadService();
 		PrintWriter script = response.getWriter();
 
 //		요청을 받는다.
@@ -139,7 +139,7 @@ public class HomeController extends HttpServlet {
 			redirect = "write";
 			break;
 		case "/writeAction":
-			BoardVO vo = upload.fileupload(request, response);
+			BoardVO vo = fileupload.upload(request, response);
 //				insert.jsp에서 테이블에 저장할 데이터를 입력하고 submit 버튼을 클릭하면 폼에 입력한 정보가
 //				컨트로롤러의 doPost() 메소드의 HttpServletRequest 인터페이스 타입의 객체인 request에 저장된다.
 //				doPost() 메소드에서는 request 객체에 저장된 데이터를 가지고 actionDo() 메소드를 실행하므로
@@ -185,7 +185,7 @@ public class HomeController extends HttpServlet {
 			break;
 
 		case "/updateAction":
-			BoardVO vo2 = upload.fileupload(request, response);
+			BoardVO vo2 = fileupload.upload(request, response);
 			bdservice.update(vo2, request, response);
 			// service.getBoardVO(request, response);
 			redirect = "view";
