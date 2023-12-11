@@ -76,9 +76,7 @@ if(session.getAttribute("userID") != null){
 		    <c:if test="${loginError == 'fail'}">
 		    	<span id="error-text">아이디 또는 비밀번호 오류입니다.</span>
 		    </c:if>
-		    <input type="submit" id="login" value="Login">
-		    <div id="googleBtn"class="g-signin2" style="max-width:400px;max-height:50px" data-onsuccess="onSignIn" data-theme="circle" data-width="auto" data-height="60"></div>
-		    
+		    <input type="submit" id="login" value="Login">		    
 		</form>
 		<div id="login-bottom">
 			<div id="remember">
