@@ -1,1 +1,1 @@
-프로젝트들을 SPRING 프로젝트로 재구성 하기 전 MVC패턴으로 다시 재구성한 프로젝트입니다.
+hobbyWebProject 프로젝트를 SPRING 프로젝트로 재구성 하기 전 MyBatis를 사용해 DB에 접근하는 MVC패턴으로 다시 재구성한 프로젝트입니다.
